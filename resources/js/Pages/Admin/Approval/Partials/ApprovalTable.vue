@@ -1,28 +1,29 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import moment from 'moment';
 import { useForm } from "@inertiajs/inertia-vue3";
 import Pagination from '@/Components/Pagination.vue';
 import TextInput from '../../../Components/TextInput.vue';
 
+// Form for pagination
 const form = useForm({
 	page: 1,
 });
 
+// Route name
 const routeName = 'admin.approval.index';
 
+// Function to change the page
 const changePage = (page) => {
 	form.page = page;
 };
 
-// onMounted(() => {
-// 	form.page = props.records.currentPage ?? 1
-// });
-
+// Format the date
 function formatDate(date) {
 	return moment(date).format('MMMM DD, YYYY h:mm a');
 }
 
+// Get the type of permit
 function getType(type) {
 	var text = '';
 	switch (type) {
@@ -39,16 +40,18 @@ function getType(type) {
 	return text;
 }
 
+// Define props
 const props = defineProps({
 	queue: [Object, Array],
 });
 
+// Reactive variables
 const openMenuIndex = ref(null);
-
 const toggleMenu = (index) => {
 	openMenuIndex.value = openMenuIndex.value === index ? null : index;
 };
 
+// Form data for changing status
 const formData = useForm({
 	id: null,
 	status: null,
@@ -56,10 +59,11 @@ const formData = useForm({
 	isNew: null,
 	clientId: null,
 	remarks: null,
-	data:null
+	data: null
 });
 
-function changeStatus(id, status, type, isSubmit = true, remarks = null,data) {
+// Function to change status
+function changeStatus(id, status, type, isSubmit = true, remarks = null, data) {
 	formData.id = id;
 	formData.status = status;
 	formData.type = type;
@@ -71,10 +75,12 @@ function changeStatus(id, status, type, isSubmit = true, remarks = null,data) {
 	}
 }
 
+// Function to submit the form
 function submitForm() {
 	formData.post(route('admin.approval.changestatus'));
 }
 
+// Function to get a record
 function getRecord(id, type, clientId) {
 	formData.id = id;
 	formData.type = type;
@@ -83,23 +89,51 @@ function getRecord(id, type, clientId) {
 	formData.post('/admin/approval/getRecord');
 }
 
+// Toggle reject modal
 const showRejectModal = ref(false);
-
 function toggleRejectModal() {
 	showRejectModal.value = !showRejectModal.value;
 }
 
+// Get the name of the person who checked the record
 function checkedBy(checkedBy) {
 	if (checkedBy != null) {
-		return checkedBy.lname + ', ' + checkedBy.fname + ' ' +  checkedBy.mname
+		return checkedBy.lname + ', ' + checkedBy.fname + ' ' + checkedBy.mname;
 	}
-
 	return '';
 }
+
+// Search bar functionality
+const searchQuery = ref(""); // Search query
+
+// Computed property to filter the queue based on search query
+const filteredQueue = computed(() => {
+	if (!searchQuery.value) {
+		return props.queue.data;
+	}
+
+	// Filter queue by client name or project title
+	return props.queue.data.filter(item => {
+		const clientName = `${item.client.lname}, ${item.client.fname} ${item.client.mname}`;
+		return clientName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+			item.project_title.toLowerCase().includes(searchQuery.value.toLowerCase());
+	});
+});
 </script>
 
 <template>
 	<div>
+		<!-- Search Bar -->
+		<div class="mb-4">
+			<input
+				type="text"
+				v-model="searchQuery"
+				placeholder="Search by owner or project title"
+				class="w-full p-2 border rounded"
+			/>
+		</div>
+
+		<!-- Table -->
 		<table class="w-full text-sm text-left">
 			<thead class="text-md text-gray-700 uppercase">
 				<tr>
@@ -114,7 +148,7 @@ function checkedBy(checkedBy) {
 				</tr>
 			</thead>
 			<tbody>
-				<template v-for="(item, index) in queue.data" :key="index">
+				<template v-for="(item, index) in filteredQueue" :key="index">
 					<tr class="border-y text-sm text-gray-900">
 						<td class="!py-2">{{ getType(item.type) }}</td>
 						<td class="!py-2">{{ item.client.lname }}, {{ item.client.fname }} {{ item.client.mname}}</td>
@@ -152,10 +186,13 @@ function checkedBy(checkedBy) {
 				</template>
 			</tbody>
 		</table>
-		<div v-if="queue.total < 1" class="w-full bg-gray-100 text-center text-sm p-5">
+
+		<!-- No data available message -->
+		<div v-if="filteredQueue.length < 1" class="w-full bg-gray-100 text-center text-sm p-5">
 			No data available
 		</div>
 
+		<!-- Pagination -->
 		<Pagination v-if="queue.total > 1 && queue.last_page > 1"
 			:currentPage="queue.current_page"
 			:lastPage="queue.last_page"
@@ -165,7 +202,7 @@ function checkedBy(checkedBy) {
 			:nextPageUrl="queue.next_page_url"
 		/>
 
-		<!-- Reject modal -->
+		<!-- Reject Modal -->
 		<div v-if="showRejectModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
 			<div class="bg-white rounded-lg shadow-lg w-full max-w-xl">
 				<form @submit.prevent="submitForm(), toggleRejectModal()">
