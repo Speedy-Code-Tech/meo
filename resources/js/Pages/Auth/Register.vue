@@ -39,6 +39,7 @@ const submit = () => {
     passwordError.value = ""; // Reset error if password is valid
     formData.post("/register", {
         onError: (e) => {
+            console.log(e)
             formData.reset("password", "password_confirmation");
         },
     });
@@ -126,16 +127,18 @@ function selectOptionBrgy(optionBrgy) {
                             <ul v-if="isOpen" class="dropdown-menu" @click="toggleDropdownSex">
                                 <li v-for="(option, index) in options" :key="index" @click="selectOption(option)" class="dropdown-item">{{ option }}</li>
                             </ul>
+                            <span v-if="formData.errors.sex" class="text-red-500 text-sm">{{ formData.errors.sex }}</span>
                         </div>
 
                         <TextInput name="Province" v-model:modelValue="formData.province" :message="formData.errors.province" />
                         <TextInput name="Municipality" v-model:modelValue="formData.municipality" :message="formData.errors.municipality" />
-                        <div @click="toggleDropdownBrgy">
+                        <div @click="toggleDropdownBrgy" >
                             Barangay
                             <div v-if="!isOpenBrgy" class="slectBox">{{ selectedOptionBrgy }}</div>
                             <ul v-if="isOpenBrgy" class="dropdown-menus" @click="toggleDropdownBrgy">
                                 <li v-for="(option, index) in optionsBrgy" :key="index" @click="selectOptionBrgy(option)" class="dropdown-item">{{ option }}</li>
                             </ul>
+                            <span v-if="formData.errors.brgy" class="text-red-500 text-sm">{{ formData.errors.brgy }}</span>
                         </div>
                         <TextInput name="Street" v-model:modelValue="formData.street" :message="formData.errors.street" />
                         <TextInput name="Contact Number" v-model:modelValue="formData.contact_number" :message="formData.errors.contact_number" />
