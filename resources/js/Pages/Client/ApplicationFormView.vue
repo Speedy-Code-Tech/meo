@@ -186,8 +186,7 @@ function getUrlWithParams(url) {
                 </h1>
                 <p class="p-4 bg-violet-200 mb-3" v-if="isCurrentSubCategory(item.subcategory_name, index)">
                     {{item.subcategory_name}}
-					<br>
-					{{ item }}
+				
                 </p>
                     <FileAction
 						:label="item.requirements_name"

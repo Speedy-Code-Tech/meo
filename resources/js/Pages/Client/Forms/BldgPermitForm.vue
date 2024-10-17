@@ -14,7 +14,7 @@ import FileAction from "../../Components/FileAction.vue";
 const props = defineProps({
     requirements: [Object, Array],
 });
-
+console.log(props.requirements)
 const toast = useToast();
 defineOptions({ layout: ClientLayout });
 
@@ -260,7 +260,6 @@ function isCurrentSubCategory(subcategory, index) {
                 </div>
                 <Map :lat="formData.latitude" :lng="formData.longitude" :show="showMaps" @update:show="toggleMaps(false)" @newLocation="saveLocation" />
             </div>
-            <PdfContainer :pdfUrl="pdfDownloadUrl" :show.sync="showPDFtemplate" @update:show="togglePDFformatModal" />
             <div v-for="(item, index) in requirements.data" :key="index">
                 <h1 class="text-2xl font-bold mb-2" v-if="isCurrentCategory(item.category_name, index)">
                     {{ item.category_name }}
@@ -268,7 +267,10 @@ function isCurrentSubCategory(subcategory, index) {
                 </h1>
                 <p class="p-4 bg-violet-200 mb-3" v-if="isCurrentSubCategory(item.subcategory_name, index)">
                     {{item.subcategory_name}}
+                    
                 </p>
+            <PdfContainer :title="item.requirements_name" :pdfUrl="pdfDownloadUrl" :show.sync="showPDFtemplate" @update:show="togglePDFformatModal" />
+
                     <FileAction 
                         :label="item.requirements_name"
                         :inputId="item.requirements_id"

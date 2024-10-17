@@ -114,7 +114,7 @@ class MainController extends Controller
      * @param Request $request
      * @return RedirectResponse
      */
-    public function logout(Request $request): RedirectResponse
+public function logout(Request $request): RedirectResponse
     {
         $user = Auth::user();
         if (!$user->isAdmin) {

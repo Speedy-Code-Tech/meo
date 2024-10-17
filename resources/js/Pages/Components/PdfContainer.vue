@@ -35,7 +35,8 @@ const props = defineProps({
     },
     title: {
         type: String,
-        required: true
+        required: true,
+        default: "PDF Viewer"
     },
     remarks: {
         type: String,
@@ -46,7 +47,7 @@ const props = defineProps({
         type: Boolean,
         required: true,
     },
-    label: {
+    title: {
         type: String,
         required: true,
     }
@@ -55,26 +56,12 @@ const props = defineProps({
 const emit = defineEmits(['update:show']);
 const pdfIframe = ref(null);
 
-// Reactive title that syncs with localStorage
-const title = ref(localStorage.getItem('title'));
 
 // Function to close modal
 const close = () => {
     emit('update:show', false);
 };
 
-// Watch for changes in localStorage and update the title
-window.addEventListener('storage', (event) => {
-    if (event.key === 'title') {
-        title.value = event.newValue;
-    }
-    
-});
-
-// You can also check localStorage on mounted if it's updated elsewhere
-onMounted(() => {
-    title.value = localStorage.getItem('title');
-});
 
 // PDF printing
 const printPdf = () => {

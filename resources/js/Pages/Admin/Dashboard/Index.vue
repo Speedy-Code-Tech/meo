@@ -15,7 +15,7 @@ defineOptions({layout: AuthenticatedLayout});
   <Head title="Dashboard" />
     <div class="flex h-full">
       <div class="flex-auto w-9/12">
-        <Widgets :totals="data.totals" :totalsToday="data.totalsToday"/>
+        <Widgets :totalsApproved="data.totalsApproved" :totals="data.totals" :totalsToday="data.totalsToday"/>
         <Widgets2 />
       </div>
       <div class="flex-auto w-3/12 pl-5 h-full">

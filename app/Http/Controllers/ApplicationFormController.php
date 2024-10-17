@@ -116,7 +116,7 @@ class ApplicationFormController extends Controller
     
     public function getBuildingReqs() {
         $requirements = Requirement::getRequirements(5, 2);
-
+    
         return Inertia::render('Client/Forms/BldgPermitForm', [
             'requirements' => $requirements
         ]);

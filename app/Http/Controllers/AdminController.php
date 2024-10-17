@@ -32,18 +32,20 @@ class AdminController extends Controller
 
         $totals = [];
         $totalsToday = [];
+        $totalsApproved = [];
 
         foreach ($applicationTypes as $key => $type) {
             $totals[$key] = ApplicationForm::getTotalRecord($type);
             $totalsToday[$key] = ApplicationForm::getTotalRecordToday($type);
-        }
-
+            $totalsApproved[$key] = ApplicationForm::getTotalApprove($type);
+        } 
         return Inertia::render('Admin/Dashboard/Index', [
             'data' => compact([
                 'history',
                 'queue',
                 'totals',
-                'totalsToday'
+                'totalsToday',
+                'totalsApproved'
             ]),
         ]);
     }

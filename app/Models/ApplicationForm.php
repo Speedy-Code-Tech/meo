@@ -53,4 +53,12 @@ class ApplicationForm extends Model
             ->whereDate('created_at', Carbon::today())
             ->count();
     }
+
+    public static function getTotalApprove(int $type)
+    {
+        return self::where('type', $type)
+            ->where('status',"Approved")
+            ->whereDate('created_at', Carbon::today())
+            ->count();
+    }
 }

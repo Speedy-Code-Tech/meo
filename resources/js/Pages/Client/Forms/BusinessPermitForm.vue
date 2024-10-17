@@ -311,12 +311,7 @@ watchEffect(()=>{
                     @newLocation="saveLocation"
                 />
             </div>
-            <PdfContainer
-                :pdfUrl="pdfDownloadUrl"
-                :title="titles"
-                :show.sync="showPDFtemplate"
-                @update:show="togglePDFformatModal"
-            />
+            
 
             <div v-for="(item, index) in requirements.data" :key="index">
                 <h1
@@ -331,7 +326,14 @@ watchEffect(()=>{
                     v-if="isCurrentSubCategory(item.subcategory_name, index)"
                 >
                     {{ item.subcategory_name }}
+                   
                 </p>
+                <PdfContainer
+                :pdfUrl="pdfDownloadUrl"
+                :title="item.requirements_name"
+                :show.sync="showPDFtemplate"
+                @update:show="togglePDFformatModal"
+            />
                 <FileAction
                     :label="item.requirements_name"
                     :title="item.requirements_name"

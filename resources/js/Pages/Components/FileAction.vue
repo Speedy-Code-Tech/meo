@@ -138,10 +138,7 @@ function toggleRemarksModal() {
             <div v-if="hasFile != null" class="flex items-center justify-center w-6 h-6 bg-yellow-500 rounded-full cursor-pointer">
                 <i class="fa-solid fa-eye text-white " @click="handlePdfUrl(), handlePdfTitle(), handlePdfRemarks()"></i>
             </div>
-            <div v-if="hasFile != null && $page.props.auth.user.isAdmin==1" class="flex items-center justify-center w-6 h-6 bg-green-500 rounded-full">
-                <i class="fa-solid fa-check text-white text-1xl"></i>
-            </div>
-            <div v-if="hasFile != null && $page.props.auth.user.isAdmin==0" class="flex items-center justify-center w-6 h-6 bg-green-500 rounded-full">
+             <div v-if="hasFile != null" class="flex items-center justify-center w-6 h-6 bg-green-500 rounded-full">
                 <i class="fa-solid fa-check text-white text-1xl"></i>
             </div>
 
