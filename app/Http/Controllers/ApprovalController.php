@@ -85,6 +85,7 @@ class ApprovalController extends Controller
     {
         $document = ApplicationDocument::find($request->id);
         $document->update(['remarks' => $request->remarks]);
+        return Inertia::render('Admin/Approval/Partials/ApplicationFormView');
     }
 
     public function getRecord(Request $request)

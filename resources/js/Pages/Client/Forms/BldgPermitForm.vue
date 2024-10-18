@@ -216,7 +216,9 @@ const submit = () => {
         onError(error) {
             console.log(error);
         },
-        onSuccess(response) {},
+        onSuccess(response) {
+            console.log(response);
+        },
     });
 };
 
@@ -234,7 +236,7 @@ const saveLocation = (event) => {
 
 var currentCategory = "";
 var currentSubCategory = "";
-const routeName = "businesspermitform";
+const routeName = "buildingpermitform";
 
 function isCurrentCategory(category, index) {
     if (currentCategory != category || index == 0) {

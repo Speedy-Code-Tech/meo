@@ -103,9 +103,9 @@ const formData = useForm({
 const showRemarksModal = ref(false);
 const addRemarks = () => {
     formData.id = props.documentId;
-	formData.post(route('admin.approval.addDocumentRemarks'));
+	formData.post(route('admin.approval.addDocumentRemarks'))
     toast.success("Remarks Successfully");
-
+    
 }
 function toggleRemarksModal() {
 	showRemarksModal.value = !showRemarksModal.value;

@@ -36,7 +36,7 @@ class ApplicationFormController extends Controller
                 'longitude' => $validated['longitude'] ?? null,
                 'type' => $validated['type'],
             ];
-
+         
             // $form = ApplicationForm::where('client_id', auth()->user()->client_id)
             // ->where('type', $validated['type'])
             // ->whereIn('status', ['Pending', 'Returned'])

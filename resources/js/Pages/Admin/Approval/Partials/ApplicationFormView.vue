@@ -6,6 +6,7 @@ import Map from "../../../Components/Map.vue";
 import FileAction from "../../../Components/FileAction.vue";
 import Pagination from "../../../../Components/Pagination.vue";
 import TextInput from "../../../Components/TextInput.vue";
+import axios from "axios";
 
 defineProps({
 	form: [Object, Array],
@@ -71,6 +72,7 @@ function changeStatus(id, status, type, isSubmit = true, remarks = null,msg) {
 	}
 }
 function submitForm() {
+	// axios.post('admin/approval/changestatus',formData)
 	formData.post(route('admin.approval.changestatus'));
 }
 function getType(type) {
@@ -178,7 +180,7 @@ function changeAction(title) {
 				<p class="p-4 bg-violet-200 mb-3" v-if="isCurrentSubCategory(item.subcategory_name, index)">
 					{{ item.subcategory_name }}
 				</p>
-				{{item.document_remarks}}
+				
 				<FileAction :label="item.requirements_name" :showDownloadButton="false" :showUploadButton="false"
 					:hasFile="item.file_path" :documentId="item.document_id" :documentRemarks="item.document_remarks"
 					@pdf-url="handlePdfUrl" @label="handlePdfTitle" @documentRemarks="handlePdfRemarks"/>

@@ -69,6 +69,7 @@ class MainController extends Controller
             ->first();
   
         // Check if 'type' is set to '1' (indicating admin login)
+        
         if ($user && Hash::check($credentials['password'], $user->password)) {
             Auth::login($user);
             $client = Client::where('id', $user->client_id)->first();
