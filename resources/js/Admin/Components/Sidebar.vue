@@ -1,6 +1,6 @@
 <script setup>
 import { usePage } from '@inertiajs/inertia-vue3';
-import { computed,ref } from 'vue';
+import { computed,ref,onMounted } from 'vue';
 
 const meoImg = '/storage/images/meo.png';
 const { url } = usePage();
@@ -11,6 +11,7 @@ const isActiveRoute = (baseRoute) => {
     return urlWithoutAdmin.startsWith(baseRoute);
   });
 };
+const InboxCount = ref(0);
 const isDashboardActive = isActiveRoute('dashboard');
 const isDocumentActive = isActiveRoute('documents');
 const isUploadActive = isActiveRoute('uploads');
@@ -18,6 +19,17 @@ const isRequestActive = isActiveRoute('requests');
 const isApprovalActive = isActiveRoute('approval');
 const isHistoryActive = isActiveRoute('history');
 
+const fetchInboxCount = async() => {
+  await axios.get(route('inbox.count'))
+    .then((response) => {
+		console.log(response.data);
+		InboxCount.value = response.data;
+    });
+};
+onMounted(() => {
+ 
+  fetchInboxCount();
+})
 </script>
 <template>
   <div class="px-8 py-2 text-3xl font-bold bg-slate-800">
@@ -84,6 +96,9 @@ const isHistoryActive = isActiveRoute('history');
         >
 					<i class="fas fa-envelope w-5 h-5 text-center"></i>
           <span class="ms-3">Inbox</span>
+          <span v-if="InboxCount > 0" class="inline-flex items-center justify-center w-5 h-5 ml-auto text-xs font-semibold text-red-800 bg-red-200 rounded-full">
+						{{ InboxCount }}
+					</span>	
 				</Link>
 			</li>
 			<li>

@@ -151,7 +151,10 @@ const handleDownload = ({ downloadableFile }) => {
 };
 
 const bldgFormdownload = ref('templates/building_permit.pdf');
-
+const title = ref('');
+const handlePdfTitle = ({ label }) => {
+	title.value = label;
+}
 const formData = useForm({
     isNew: selectedradioOption,
     category: selectedOption,
@@ -165,7 +168,13 @@ const formData = useForm({
 const handleFileSelected = ({ file, inputId }) => {
     formData.files[inputId] = file;
 };
+function checkFileUpload(inputId) {
+    if (formData.files[inputId] != null) {
+        return true;
+    }
 
+    return false;
+}
 const prepareFormData = () => {
     const data = new FormData();
     // data.append('isNew', formData.isNew);
@@ -260,6 +269,13 @@ function isCurrentSubCategory(subcategory, index) {
                 </div>
                 <Map :lat="formData.latitude" :lng="formData.longitude" :show="showMaps" @update:show="toggleMaps(false)" @newLocation="saveLocation" />
             </div>
+			<PdfContainer
+                :pdfUrl="pdfDownloadUrl"
+                :show.sync="showPDFtemplate"
+                :title="title"
+                @update:show="togglePDFformatModal"
+            />
+
             <div v-for="(item, index) in requirements.data" :key="index">
                 <h1 class="text-2xl font-bold mb-2" v-if="isCurrentCategory(item.category_name, index)">
                     {{ item.category_name }}
@@ -269,15 +285,17 @@ function isCurrentSubCategory(subcategory, index) {
                     {{item.subcategory_name}}
                     
                 </p>
-            <PdfContainer :title="item.requirements_name" :pdfUrl="pdfDownloadUrl" :show.sync="showPDFtemplate" @update:show="togglePDFformatModal" />
-
-                    <FileAction 
-                        :label="item.requirements_name"
-                        :inputId="item.requirements_id"
-                        @file-selected="handleFileSelected"
-                        :downloadableFile="item.template_file_path"
-                        @download-url="handleDownload"
-                    />
+            
+                <FileAction
+                    :label="item.requirements_name"
+                    :title="item.requirements_name"
+                    :inputId="item.requirements_id"
+                    @file-selected="handleFileSelected"
+                    @label="handlePdfTitle"
+                    :downloadableFile="item.template_file_path"
+                    @download-url="handleDownload"
+                    :hasUploadedFile="checkFileUpload(item.requirements_id)"
+                />
             </div>
 
             <div class="flex items-center justify-between mb-3">

@@ -73,7 +73,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
-
+   
     // Route::inertia('/notifications', 'Client/Notification')->name('notifications');
     Route::post('/logout', [MainController::class, 'logout'])->name('logout');
 
@@ -147,6 +147,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/chat/{friend}', [InboxController::class, 'getMessages'])->name('chat');
     Route::post('/chat/send', [InboxController::class, 'sendMessage'])->name('chat.send');
     Route::get('/notification/count', [NotificationController::class, 'getNotificationCount'])->name('notification.count');
+    Route::get('/inbox/count', [InboxController::class, 'inboxCount'])->name('inbox.count');
 });
 Route::middleware('guest')->group(function () {
     // Route::inertia('/', 'Home')->name('home');

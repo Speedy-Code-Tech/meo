@@ -82,7 +82,7 @@ class MainController extends Controller
 
             // // Redirect based on user type
 
-            return $isAdmin ? redirect()->intended('admin/dashboard') : redirect()->route('documentview');
+            return $user->isAdmin ? redirect()->intended('admin/dashboard') : redirect()->route('documentview');
         }
 
         // If authentication fails, redirect back with error message

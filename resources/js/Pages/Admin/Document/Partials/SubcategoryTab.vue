@@ -44,6 +44,9 @@ function deleteItem(id) {
 
 <template>
 	<div class="w-full">
+		<button style="position: absolute; margin-top: -52px; right: 55px; width: 16%;" class="text-white bg-blue-700 rounded-lg px-5 py-2.5 text-sm" @click="toggleModal">
+							Add SubCategory
+						</button>
 		<!-- Table -->
 		<table class="w-full text-sm text-left">
 			<thead class="text-md text-gray-700 uppercase">
@@ -53,9 +56,7 @@ function deleteItem(id) {
 					<th class="flex justify-between items-center">
 						<span>Action</span>
 						<!-- Add Subcategory Button -->
-						<button style="position: absolute; margin-top: -8%; right: 4%; width: 16%;" class="text-white bg-blue-700 rounded-lg px-5 py-2.5 text-sm ml-4" @click="toggleModal">
-							Add Subcategory
-						</button>
+						
 					</th>
 				</tr>
 			</thead>

@@ -32,6 +32,9 @@ const activeTabComponent = computed(() => {
       return null;
   }
 });
+const modal = (data)=>{
+
+}
 defineOptions({layout: AuthenticatedLayout});
 </script>
 
@@ -71,7 +74,7 @@ defineOptions({layout: AuthenticatedLayout});
             </Button>
           </li>
          
-          <!-- <li>
+          <li>
             <Button
               @click="changeTab('fee')"
               :class="{'bg-gray-600 text-white hover:bg-gray-600': activeTab === 'fee'}"
@@ -79,11 +82,14 @@ defineOptions({layout: AuthenticatedLayout});
             >
               Fees
             </Button>
-          </li> -->
+          </li>
+
+         
         </ul>
         <div class="p-2">
           <component :is="activeTabComponent" 
             :categories="categories"
+            :active="activeTab"
             :subcategories="subcategories"
             :requirements="requirements"
           />

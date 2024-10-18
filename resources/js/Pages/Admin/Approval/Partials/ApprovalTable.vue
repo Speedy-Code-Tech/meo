@@ -20,6 +20,7 @@ const changePage = (page) => {
 
 // Format the date
 function formatDate(date) {
+	console.log(date);
 	return moment(date).format('MMMM DD, YYYY h:mm a');
 }
 
@@ -152,8 +153,8 @@ const filteredQueue = computed(() => {
 					<tr class="border-y text-sm text-gray-900">
 						<td class="!py-2">{{ getType(item.type) }}</td>
 						<td class="!py-2">{{ item.client.lname }}, {{ item.client.fname }} {{ item.client.mname}}</td>
-						<td class="!py-2">{{ item.project_title }}</td>
-						<td class="!py-2">{{ formatDate(item.application_date) }}</td>
+						<td class="!py-2">{{ (item.project_title).toUpperCase() }}</td>
+						<td class="!py-2">{{ formatDate(item.created_at) }}</td>
 						<td class="!py-2">{{ item.remarks }}</td>
 						<td class="!py-2 whitespace-nowrap">
 							<span class="p-2 rounded"

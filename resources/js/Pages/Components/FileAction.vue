@@ -59,7 +59,7 @@ const handleFileChange = (event) => {
 
 const handleDownload = (data) => {
     emit('download-url', { downloadableFile: props.downloadableFile }); 
-    emit('title-url', { title: data }); 
+    emit('label', { title: data }); 
     localStorage.setItem('title', data);
 };
 
@@ -118,7 +118,7 @@ function toggleRemarksModal() {
             <!-- Download Button -->
 
             <div v-if="showDownloadButton"
-                @click="handleDownload(label)" class="text-white px-3 py-1 rounded cursor-pointer"
+                @click="handleDownload(label),handlePdfTitle()" class="text-white px-3 py-1 rounded cursor-pointer"
                 :class="[
                     !downloadableFile ? 'bg-gray-100 cursor-not-allowed pointer-events-none' : 'bg-red-400',
                 ]"

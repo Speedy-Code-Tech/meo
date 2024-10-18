@@ -67,7 +67,7 @@ function checkedBy(checkedBy) {
 			<tbody>
 				<template v-for="(item, index) in records.data" :key="index">
 					<tr class="border-y text-sm text-gray-900">
-						<td class="!py-2">{{ item.project_title }}</td>
+						<td class="!py-2">{{ (item.project_title).toUpperCase() }}</td>
 						<td class="!py-2 uppercase">{{ item.category }}</td>
 						<td class="!py-2">{{ getType(item.type) }}</td>
 						<td class="!py-2">{{checkedBy(item.checked_by)}}</td>

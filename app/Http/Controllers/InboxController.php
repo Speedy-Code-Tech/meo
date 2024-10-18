@@ -29,20 +29,27 @@ class InboxController extends Controller
 
         return redirect()->route('inbox.chat', $user_id);
     }
-    
+
 
     public function userInbox(User $friend)
     {
         $user = auth()->user();
+        
+        $messages = ChatMessage::where('receiver_id', auth()->id())->get();
+
+        foreach ($messages as $message) {
+            $message->is_viewed=1;
+            $message->save();
+        }
         $query = User::where('id', '!=', auth()->id())
-             ->with('client');
+            ->with('client');
 
         if (!$user->isAdmin) {
             $query->where('isAdmin', 1);
         }
 
         $users = $query->get();
-        
+
         $chatMateIds = DB::table('chat_messages')
             ->select('sender_id as user_id')
             ->whereNot('sender_id', auth()->id())
@@ -60,13 +67,13 @@ class InboxController extends Controller
             ->with('client')
             ->get();
 
-            $messages = ChatMessage::getMessages($friend)
+        $messages = ChatMessage::getMessages($friend)
             ->get();
         $currentUser = auth()->user();
-        
+
         $component = auth()->user()->isAdmin
             ? 'Admin/Inbox/Index'
-            :'Client/Inbox';
+            : 'Client/Inbox';
 
         $friend = User::with('client')->find($friend->id);
 
@@ -119,5 +126,15 @@ class InboxController extends Controller
             'status' => 'success',
             'chat' => $chat,
         ]);
+    }
+
+    public function inboxCount()
+    {
+        
+        $count = ChatMessage::where('is_viewed', 0)
+            ->where('receiver_id', auth()->user()->id)
+            ->count();
+        
+        return $count;
     }
 }

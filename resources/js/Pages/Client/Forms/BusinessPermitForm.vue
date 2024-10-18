@@ -152,8 +152,11 @@ const selectOptions = [
     },
 ];
 const selectedOption = ref("");
+const title = ref('');
 const selectError = ref("");
-
+const handlePdfTitle = ({ label }) => {
+	title.value = label;
+}
 const selectedradioOption = ref(1);
 const radioError = ref("");
 const radioOptions = [
@@ -311,7 +314,12 @@ watchEffect(()=>{
                     @newLocation="saveLocation"
                 />
             </div>
-            
+            <PdfContainer
+                :pdfUrl="pdfDownloadUrl"
+                :show.sync="showPDFtemplate"
+                :title="title"
+                @update:show="togglePDFformatModal"
+            />
 
             <div v-for="(item, index) in requirements.data" :key="index">
                 <h1
@@ -328,18 +336,13 @@ watchEffect(()=>{
                     {{ item.subcategory_name }}
                    
                 </p>
-                <PdfContainer
-                :pdfUrl="pdfDownloadUrl"
-                :title="item.requirements_name"
-                :show.sync="showPDFtemplate"
-                @update:show="togglePDFformatModal"
-            />
+              
                 <FileAction
                     :label="item.requirements_name"
                     :title="item.requirements_name"
                     :inputId="item.requirements_id"
                     @file-selected="handleFileSelected"
-                    
+                    @label="handlePdfTitle"
                     :downloadableFile="item.template_file_path"
                     @download-url="handleDownload"
                     :hasUploadedFile="checkFileUpload(item.requirements_id)"

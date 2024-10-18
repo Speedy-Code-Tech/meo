@@ -51,6 +51,7 @@ const fees = {
 
 <template>
   <div class="w-3/5">
+    
     <table class="w-full text-sm text-left">
       <thead class="text-md text-gray-700 uppercase">
         <tr>

@@ -145,6 +145,10 @@ const radioOptions = [
     { value: 1, label: 'New' },
     { value: 0, label: 'Renewal' }
 ];
+const title = ref('');
+const handlePdfTitle = ({ label }) => {
+	title.value = label;
+}
 
 const changeSelectedDetail = (details) => {
     selectedOptionDetails.value = details;
@@ -192,7 +196,13 @@ const prepareFormData = () => {
 
     return data;
 };
+function checkFileUpload(inputId) {
+    if (formData.files[inputId] != null) {
+        return true;
+    }
 
+    return false;
+}
 const submit = () => {
     const data = prepareFormData();
     formData.post('/applicationform/store', {
@@ -266,7 +276,13 @@ function isCurrentSubCategory(subcategory, index) {
                 </div>
                 <Map :show="showMaps" @update:show="toggleMaps(false)" @newLocation="saveLocation" />
             </div>
-            <PdfContainer :pdfUrl="pdfDownloadUrl" :show.sync="showPDFtemplate" @update:show="togglePDFformatModal" />
+            <PdfContainer
+                :pdfUrl="pdfDownloadUrl"
+                :show.sync="showPDFtemplate"
+                :title="title"
+                @update:show="togglePDFformatModal"
+            />
+
             <div v-for="(item, index) in requirements.data" :key="index">
                 <h1 class="text-2xl font-bold mb-2" v-if="isCurrentCategory(item.category_name, index)">
                     {{ item.category_name }}
@@ -275,13 +291,16 @@ function isCurrentSubCategory(subcategory, index) {
                 <p class="p-4 bg-violet-200 mb-3" v-if="isCurrentSubCategory(item.subcategory_name, index)">
                     {{item.subcategory_name}}
                 </p>
-                    <FileAction 
-                        :label="item.requirements_name"
-                        :inputId="item.requirements_id"
-                        @file-selected="handleFileSelected"
-                        :downloadableFile="item.template_file_path"
-                        @download-url="handleDownload"
-                    />
+                <FileAction
+                    :label="item.requirements_name"
+                    :title="item.requirements_name"
+                    :inputId="item.requirements_id"
+                    @file-selected="handleFileSelected"
+                    @label="handlePdfTitle"
+                    :downloadableFile="item.template_file_path"
+                    @download-url="handleDownload"
+                    :hasUploadedFile="checkFileUpload(item.requirements_id)"
+                />
             </div>
 
             <div class="flex items-center justify-between mb-3">

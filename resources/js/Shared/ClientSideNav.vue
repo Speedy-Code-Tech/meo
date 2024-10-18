@@ -11,6 +11,7 @@ const isActiveRoute = (baseRoute) => {
 };
 const userId = usePage().props.value.auth.user.id;
 const notificationCount = ref(0);
+const InboxCount = ref(0);
 const isDocumentViewActive = isActiveRoute('/documentview');
 const isApplicationFormActive = isActiveRoute('/applicationform');
 const isSubmittedFormActive = isActiveRoute('/my-application-forms');
@@ -22,6 +23,14 @@ const fetchNotificationCount = () => {
   axios.get(route('notification.count'))
     .then((response) => {
       notificationCount.value = response.data;
+    });
+};
+
+const fetchInboxCount = async() => {
+  await axios.get(route('inbox.count'))
+    .then((response) => {
+		console.log(response.data);
+		InboxCount.value = response.data;
     });
 };
 
@@ -38,6 +47,7 @@ const listenForNotifications = () => {
 onMounted(() => {
   fetchNotificationCount();
   listenForNotifications();
+  fetchInboxCount();
 })
 </script>
 
@@ -79,6 +89,9 @@ onMounted(() => {
 				<Link :href="route('inbox.index')" class="nav-link" :class="{ 'bg-slate-800': isInboxActive}">
 					<i class="fas fa-envelope w-5 h-5 text-center"></i>
 					<span class="ms-3">Inbox</span>
+					<span v-if="InboxCount > 0" class="inline-flex items-center justify-center w-5 h-5 ml-auto text-xs font-semibold text-red-800 bg-red-200 rounded-full">
+						{{ InboxCount }}
+					</span>	
 				</Link>
 			</li>
 			<li>

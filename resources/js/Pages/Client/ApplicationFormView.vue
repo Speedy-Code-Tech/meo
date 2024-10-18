@@ -53,7 +53,6 @@ const handlePdfRemarks = ({ documentRemarks }) => {
 const togglePDFformatModal = (event) => {
 	showPDFtemplate.value = event;
 }
-
 const toggleModal = (event) => {
 	showModal.value = event;
 }
