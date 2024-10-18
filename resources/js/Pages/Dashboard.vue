@@ -1,4 +1,5 @@
 <script setup>
+
 import ClientLayout from '../Shared/ClientLayout.vue';
 
 defineOptions({layout: ClientLayout});

@@ -1,6 +1,8 @@
 <script setup>
 import { useForm } from "@inertiajs/inertia-vue3";
 import { ref } from 'vue';
+import { useToast } from "vue-toastification";
+const toast = useToast();
 import TextInput from './TextInput.vue';
 const props = defineProps({
     label: {
@@ -102,6 +104,8 @@ const showRemarksModal = ref(false);
 const addRemarks = () => {
     formData.id = props.documentId;
 	formData.post(route('admin.approval.addDocumentRemarks'));
+    toast.success("Remarks Successfully");
+
 }
 function toggleRemarksModal() {
 	showRemarksModal.value = !showRemarksModal.value;

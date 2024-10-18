@@ -37,16 +37,16 @@ class ApplicationFormController extends Controller
                 'type' => $validated['type'],
             ];
 
-            $form = ApplicationForm::where('client_id', auth()->user()->client_id)
-            ->where('type', $validated['type'])
-            ->whereIn('status', ['Pending', 'Returned'])
-            ->first();
+            // $form = ApplicationForm::where('client_id', auth()->user()->client_id)
+            // ->where('type', $validated['type'])
+            // ->whereIn('status', ['Pending', 'Returned'])
+            // ->first();
             
-            if ($form) {
-                $form->update($data);
-            } else {
+            // if ($form) {
+            //     $form->update($data);
+            // } else {
                 $form = ApplicationForm::create($data);
-            }
+            // }
             // $form = ApplicationForm::updateOrCreate(
             //     [
             //         'client_id' => auth()->user()->client_id,

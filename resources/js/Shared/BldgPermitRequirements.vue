@@ -28,7 +28,7 @@ function isCurrentSubCategory(subcategory, index) {
 </script>
 <template>
     <div class="w-full max-w-4xl mx-auto px-4 py-6 card mt-3">
-
+        
         <Head title="Document View Business Permit" />
         <h1 class="text-2xl font-bold mb-2 text-center">Requirements of Application for Building Permit</h1>
         <hr class="border-gray-300 mb-6" />

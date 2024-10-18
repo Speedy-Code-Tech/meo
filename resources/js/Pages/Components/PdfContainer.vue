@@ -1,6 +1,7 @@
 <template>
     <div v-if="show" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
         <div class="bg-white rounded-lg shadow-lg w-full max-w-4xl">
+         
             <div class="flex justify-between items-center p-4 border-b">
                 <h3 class="text-lg font-semibold">{{ title }}</h3>
                 <span  @click="close" style="cursor: pointer;" class="text-gray-500 hover:text-gray-700">
@@ -11,6 +12,7 @@
                     </svg>
                 </span>
             </div>
+            
             <div class="p-4" v-if="remarks != null">
                 <h3 class="text-md italic"><span style="font-weight: bold">Remarks: </span>{{ remarks }}</h3>
             </div>

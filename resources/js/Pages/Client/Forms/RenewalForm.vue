@@ -210,9 +210,12 @@ const submit = () => {
         headers: { 'Content-Type': 'multipart/form-data' },
         onError: () => formData.reset(),
         onSuccess(response) {
-            toast.success("Application form submitted successfully!");
+            console.log(response);
+            // toast.success("Application form submitted successfully!");
         },
+        
     });
+    
 };
 
 const showMaps = ref(false);
