@@ -314,6 +314,7 @@ function isCurrentSubCategory(subcategory, index) {
                     :previousPageUrl="requirements.prev_page_url"
                     :nextPageUrl="requirements.next_page_url"
                 />
+           
                 <div>
                     <button class="danger-btn" :class="{ 'hidden': requirements.last_page != requirements.current_page }" :disabled="formData.processing">Submit</button>
                 </div>

@@ -24,7 +24,17 @@ const deleteForm = useForm({
     id: null,
 });
 
+// Validation error state
+const categoryError = ref(null);
+
 const submit = () => {
+    // Check if the category field is empty
+    if (!formData.category) {
+        categoryError.value = 'Category name is required';
+        return;
+    }
+
+    // If validation passes, submit the form
     formData.post(route("admin.document.addcategory"), {
 		onSuccess(response) {
             toast.success("Category successfully added");
@@ -36,7 +46,6 @@ const submit = () => {
 function deleteItem(id) {
 	deleteForm.delete('/admin/documents/category/' + id);
 }
-
 </script>
 
 <template>
@@ -51,8 +60,6 @@ function deleteItem(id) {
 					<th>Category Name</th>
 					<th class="flex justify-between items-center">
 						<span>Action</span>
-						<!-- Add Category Button -->
-						
 					</th>
 				</tr>
 			</thead>
@@ -87,6 +94,8 @@ function deleteItem(id) {
 				</div>
 				<div class="p-4 h-[20vh]">
 					<TextInput name="Category Name" v-model:modelValue="formData.category"></TextInput>
+                    <!-- Show validation error if category is empty -->
+                    <p v-if="categoryError" class="text-red-500 text-sm">{{ categoryError }}</p>
 					<div class="mt-5">
 						<button class="primary-btn">Submit</button>
 					</div>

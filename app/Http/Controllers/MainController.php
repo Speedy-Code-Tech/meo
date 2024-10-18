@@ -69,7 +69,8 @@ class MainController extends Controller
             ->first();
   
         // Check if 'type' is set to '1' (indicating admin login)
-        
+        if($request->type==$user->isAdmin){
+            
         if ($user && Hash::check($credentials['password'], $user->password)) {
             Auth::login($user);
             $client = Client::where('id', $user->client_id)->first();
@@ -86,6 +87,16 @@ class MainController extends Controller
             return $user->isAdmin ? redirect()->intended('admin/dashboard') : redirect()->route('documentview');
         }
 
+    }else if($user->isAdmin==0){
+        return back()->withErrors([
+            'email' => 'This page is not for User.'
+        ])->onlyInput('email');
+    }else if($user->isAdmin==1){
+
+        return back()->withErrors([
+            'email' => 'This page is not for Administrator.'
+        ])->onlyInput('email');
+    }
         // If authentication fails, redirect back with error message
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.'

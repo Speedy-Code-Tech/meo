@@ -125,12 +125,13 @@ class ApplicationFormController extends Controller
     public function getSubmittedForms() {
         $records = ApplicationForm::with(['client', 'checkedBy'])
             ->where('client_id', auth()->user()->client_id)
-            ->paginate(5);
-
+            ->paginate(5); // Pagination with 5 records per page
+    
         return Inertia::render('Client/SubmittedForms', [
-            'records' => $records
+            'records' => $records, // Passing paginated data
         ]);
     }
+    
 
     public function getRecord(Request $request) {
         $id = $request->id;

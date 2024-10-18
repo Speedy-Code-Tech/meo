@@ -23,7 +23,30 @@ const formData = useForm({
     subcategory: null,
 });
 
+// Validation error states
+const categoryError = ref(null);
+const subcategoryError = ref(null);
+
 const submit = () => {
+    // Clear previous errors
+    categoryError.value = null;
+    subcategoryError.value = null;
+    
+    // Validate if category and subcategory are filled
+    let hasError = false;
+    if (!formData.category) {
+        categoryError.value = 'Category is required';
+        hasError = true;
+    }
+    if (!formData.subcategory) {
+        subcategoryError.value = 'Subcategory is required';
+        hasError = true;
+    }
+    
+    // If there are validation errors, don't proceed with form submission
+    if (hasError) return;
+
+    // If validation passes, submit the form
     formData.post(route("admin.document.addsubcategory"), {
 		onSuccess(response) {
             toast.success("Subcategory successfully added");
@@ -39,7 +62,6 @@ const deleteForm = useForm({
 function deleteItem(id) {
 	deleteForm.delete('/admin/documents/subcategory/' + id);
 }
-
 </script>
 
 <template>
@@ -55,8 +77,6 @@ function deleteItem(id) {
 					<th class="w-2/3">Subcategory Name</th>
 					<th class="flex justify-between items-center">
 						<span>Action</span>
-						<!-- Add Subcategory Button -->
-						
 					</th>
 				</tr>
 			</thead>
@@ -92,7 +112,13 @@ function deleteItem(id) {
 				</div>
 				<div class="p-4 mb-2">
 					<SelectInput name="Select Category" :options="categories" v-model:modelValue="formData.category"/>
+                    <!-- Show validation error for category -->
+                    <p v-if="categoryError" class="text-red-500 text-sm">{{ categoryError }}</p>
+                    
 					<TextInput name="Subcategory Name" v-model:modelValue="formData.subcategory"/>
+                    <!-- Show validation error for subcategory -->
+                    <p v-if="subcategoryError" class="text-red-500 text-sm">{{ subcategoryError }}</p>
+
 					<div class="mt-5">
 						<button class="primary-btn">Submit</button>
 					</div>
@@ -101,4 +127,3 @@ function deleteItem(id) {
 		</div>
 	</div>
 </template>
-

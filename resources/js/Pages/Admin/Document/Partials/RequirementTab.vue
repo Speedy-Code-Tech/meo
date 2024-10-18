@@ -1,36 +1,30 @@
 <script setup>
 import { ref } from 'vue';
 import { useForm } from "@inertiajs/inertia-vue3";
-import { useToast } from 'vue-toastification'
+import { useToast } from 'vue-toastification';
 import TextInput from '../../../Components/TextInput.vue';
 import SelectInput from '../../../Components/SelectInput.vue';
 import FileAction from '../../../Components/FileAction.vue';
 
 const toast = useToast();
+
 defineProps({
 	subcategories: [Object, Array],
 	requirements: [Object, Array],
-	active:{type:String,required:true}
+	active: { type: String, required: true }
 });
+
 const show = ref(false);
 
 function toggleModal() {
 	show.value = !show.value;
 }
+
 const options = [
-	{
-		'label': 'Business Permit (New)',
-		'value': 1
-	},
-	{
-		'label': 'Building Permit',
-		'value': 2
-	},
-	{
-		'label': 'Business Permit (Renew)',
-		'value': 3
-	},
-]
+	{ label: 'Business Permit (New)', value: 1 },
+	{ label: 'Building Permit', value: 2 },
+	{ label: 'Business Permit (Renew)', value: 3 },
+];
 
 const formData = useForm({
 	requirement: null,
@@ -38,19 +32,36 @@ const formData = useForm({
 	type: null,
 });
 
-const prepareFormData = () => {
-	const data = new FormData();
+// Validation error states
+const subcategoryError = ref(null);
+const typeError = ref(null);
+const requirementError = ref(null);
 
-	Object.keys(formData).forEach(key => {
-		if (formData[key] !== undefined) {
-			data.append(key, formData[key]);
-		}
-	});
-
-	return data;
-};
 const submit = () => {
-	// const data = prepareFormData();
+	// Clear previous errors
+	subcategoryError.value = null;
+	typeError.value = null;
+	requirementError.value = null;
+
+	// Validate if fields are filled
+	let hasError = false;
+	if (!formData.subcategory) {
+		subcategoryError.value = 'Subcategory is required';
+		hasError = true;
+	}
+	if (!formData.type) {
+		typeError.value = 'Permit type is required';
+		hasError = true;
+	}
+	if (!formData.requirement) {
+		requirementError.value = 'Requirement name is required';
+		hasError = true;
+	}
+
+	// If there are validation errors, don't proceed with form submission
+	if (hasError) return;
+
+	// If validation passes, submit the form
 	formData.post(route("admin.document.addrequirement"), {
 		onSuccess(response) {
 			toast.success("Requirement successfully added");
@@ -60,7 +71,7 @@ const submit = () => {
 };
 
 const deleteForm = useForm({
-    id: null,
+	id: null,
 });
 
 function deleteItem(id) {
@@ -72,8 +83,8 @@ function deleteItem(id) {
 <template>
 	<div class="w-full">
 		<button style="position: absolute; margin-top: -52px; right: 55px; width: 16%;" class="text-white bg-blue-700 rounded-lg px-5 py-2.5 text-sm" @click="toggleModal">
-							Add Requirement
-						</button>
+			Add Requirement
+		</button>
 		<table class="w-full text-sm text-left">
 			<thead class="text-md text-gray-700 uppercase">
 				<tr>
@@ -83,10 +94,6 @@ function deleteItem(id) {
 					<th class="w-2/5">Document Type</th>
 					<th class="flex justify-between items-center">
 						<span>Action</span>
-						<!-- Add Requirement Button beside Action -->
-						<!-- <button style="position: absolute; margin-top: -8%; right: 4%; width: 16%;" class="text-white bg-blue-700 rounded-lg px-5 py-2.5 text-sm " @click="toggleModal">
-							Add Requirement
-						</button> -->
 					</th>
 				</tr>
 			</thead>
@@ -123,8 +130,17 @@ function deleteItem(id) {
 				</div>
 				<div class="p-4 mb-2">
 					<SelectInput name="Select Subcategory" :options="subcategories" v-model:modelValue="formData.subcategory"/>
+					<!-- Show validation error for subcategory -->
+					<p v-if="subcategoryError" class="text-red-500 text-sm">{{ subcategoryError }}</p>
+					
 					<SelectInput name="Select Permit Type" :options="options" v-model:modelValue="formData.type"/>
+					<!-- Show validation error for permit type -->
+					<p v-if="typeError" class="text-red-500 text-sm">{{ typeError }}</p>
+
 					<TextInput name="Requirement Name" v-model:modelValue="formData.requirement"/>
+					<!-- Show validation error for requirement -->
+					<p v-if="requirementError" class="text-red-500 text-sm">{{ requirementError }}</p>
+
 					<div class="mt-5">
 						<button class="primary-btn">Submit</button>
 					</div>

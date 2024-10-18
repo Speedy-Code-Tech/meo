@@ -12,7 +12,8 @@ use Inertia\Inertia;
 
 class DocumentController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         $categories = Category::selectRaw(
             'id,
             category_name,
@@ -39,10 +40,11 @@ class DocumentController extends Controller
         ]);
     }
 
-    
+
     public function addCategory(Request $request)
     {
-        Category::create(['category_name' => $request->category]);
+            Category::create(['category_name' => $request->category]);
+        
     }
 
     public function deleteCategory(Category $id)

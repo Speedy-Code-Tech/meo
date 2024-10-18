@@ -81,12 +81,31 @@ class ApprovalController extends Controller
         return Redirect::route('admin.approval.index');
     }
 
-    public function addDocumentRemarks(Request $request)
-    {
-        $document = ApplicationDocument::find($request->id);
-        $document->update(['remarks' => $request->remarks]);
-        return Inertia::render('Admin/Approval/Partials/ApplicationFormView');
+   public function addDocumentRemarks(Request $request)
+{
+    // Find the document by ID
+    $document = ApplicationDocument::find($request->id);
+    
+    // If remarks already exist, return an error
+    if($document->remarks) {
+        return response()->json([
+            'remarks' => 'Remarks already exist for this document.',
+            'success'=>false,
+            'datas'=>$document->remarks
+        ]);
     }
+
+    // Update the document with the new remarks
+    $document->update(['remarks' => $request->remarks]);
+
+    // Return a redirect with success message
+    return response()->json([
+        'remarks' => 'Remarks Added SUccessfully',
+        'success'=>true,
+        'datas'=>$document->remarks
+    ]);
+}
+
 
     public function getRecord(Request $request)
     {
