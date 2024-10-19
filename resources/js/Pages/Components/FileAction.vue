@@ -115,33 +115,33 @@ const addRemarks = async () => {
 
     try {
         // Make the Axios POST request
-        const response = await axios.post('/admin/approval/addDocumentRemarks', {
-            id: formData.id,
-            remarks: formData.remarks
-        });
+        const response = await axios.post(
+            "/admin/approval/addDocumentRemarks",
+            {
+                id: formData.id,
+                remarks: formData.remarks,
+            }
+        );
 
         // Handle success response
         if (response.data.success) {
             toast.success(response.data.remarks);
 
-            toggleRemarksModal()
+            toggleRemarksModal();
         } else {
             toast.error(response.data.remarks);
         }
-
     } catch (error) {
         // Handle error response
         if (error.response && error.response.data) {
-            toast.error(error.response.data.remarks || 'An error occurred.');
+            toast.error(error.response.data.remarks || "An error occurred.");
         } else {
-            toast.error('An error occurred while adding remarks.');
+            toast.error("An error occurred while adding remarks.");
         }
     } finally {
         toggleRemarksModal(); // Close the modal after request completion
     }
-
 };
-
 
 function toggleRemarksModal() {
     showRemarksModal.value = !showRemarksModal.value;
@@ -253,14 +253,32 @@ function toggleRemarksModal() {
                         </svg>
                     </button>
                 </div>
-                <div class="p-4 h-[20vh]">
+                <div class="p-4 h-[30vh]">
                     <!-- <TextInput name="Remarks" ></TextInput> -->
                     <textarea
                         name="Remarks"
                         class="w-full h-15 border border-gray-300 rounded p-2"
                         v-model="formData.remarks"
-                        
                     ></textarea>
+                    <div style="display: flex; width: 100%; justify-content: space-; padding-top: 10px;">
+                        <button>
+                            <div
+                                class="flex items-center justify-center w-6 h-6 bg-red-500 rounded-full"
+                            >
+                                <i class="fa-solid fa-x text-white"></i>
+                            </div>
+                        </button>
+                        <button>
+                            <div
+                                v-if="hasFile != null"
+                                class="flex items-center justify-center w-6 h-6 bg-green-500 rounded-full"
+                            >
+                                <i
+                                    class="fa-solid fa-check text-white text-1xl"
+                                ></i>
+                            </div>
+                        </button>
+                    </div>
                     <div class="mt-5">
                         <button class="primary-btn">Submit</button>
                     </div>

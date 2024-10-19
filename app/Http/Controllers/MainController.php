@@ -68,7 +68,7 @@ class MainController extends Controller
                 ->orWhere('contact_number', $username)
                 ->where('isAdmin', $isAdmin)
                 ->first();
-
+            if($user){
             // Check if 'type' is set to '1' (indicating admin login)
             if ($request->type == $user->isAdmin) {
 
@@ -102,6 +102,12 @@ class MainController extends Controller
             return back()->withErrors([
                 'email' => 'The provided credentials do not match our records.'
             ])->onlyInput('email');
+            }else{
+                return back()->withErrors([
+                    'email' => 'The provided credentials do not match our records.'
+                ])->onlyInput('email');
+                    
+            }
         }else{
              // If authentication fails, redirect back with error message
              return back()->withErrors([
