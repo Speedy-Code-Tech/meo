@@ -24,6 +24,7 @@ class UserSeeder extends Seeder
             'client_id' => $client->id,
             'isAdmin' => 1,
             'contact_number' => "09123456789",
+            'username' => 'Admin'
         ]);
     }
 }

@@ -73,6 +73,7 @@ class MainController extends Controller
             
         if ($user && Hash::check($credentials['password'], $user->password)) {
             Auth::login($user);
+            
             $client = Client::where('id', $user->client_id)->first();
             // Store additional data in the session
             if ($client) {

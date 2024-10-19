@@ -132,6 +132,7 @@ class ApplicationFormController extends Controller
         ]);
     }
     
+    
 
     public function getRecord(Request $request) {
         $id = $request->id;

@@ -1,10 +1,13 @@
 <script setup>
 import { useForm } from "@inertiajs/inertia-vue3";
-import Pagination from './Pagination.vue'; // Import the Pagination component
+import Pagination from "../../Components/Pagination.vue";
+
+import ClientLayout from "../../Shared/ClientLayout.vue";
 
 defineProps({
     records: [Object, Array], // Paginated records from backend
 });
+defineOptions({ layout: ClientLayout });
 
 const formData = useForm({
     id: null,
@@ -12,18 +15,29 @@ const formData = useForm({
 
 function getRecord(id) {
     formData.id = id;
-    formData.get(route('my-application-forms-record'), {
+    formData.get(route("my-application-forms-record"), {
         preserveState: true,
     });
 }
-
+function getType(type) {
+    return type == 0 ? "User" : "Admin";
+}
 // Function to handle page changes
 function changePage(page) {
-    const url = new URL(route('client.submitted-forms')); // Replace with the correct route
-    url.searchParams.set('page', page); // Set the page parameter in the URL
+    const url = new URL(route("client.submitted-forms")); // Replace with the correct route
+    url.searchParams.set("page", page); // Set the page parameter in the URL
 
     formData.get(url.toString(), { preserveState: true });
 }
+function checkedBy(checkedBy) {
+    if (checkedBy != null) {
+        return checkedBy.lname + ", " + checkedBy.fname + " " + checkedBy.mname;
+    }
+    return "";
+}
+
+const routeName = 'my-application-forms';
+
 </script>
 
 <template>
@@ -49,26 +63,37 @@ function changePage(page) {
                         <td>{{ getType(item.type) }}</td>
                         <td>{{ checkedBy(item.checked_by) }}</td>
                         <td>
-                            <span class="p-2 rounded"
+                            <span
+                                class="p-2 rounded"
                                 :class="{
                                     'bg-green-100': item.status == 'Approved',
                                     'bg-red-100': item.status == 'Rejected',
                                     'bg-yellow-100': item.status == 'Pending',
                                     'bg-orange-200': item.status == 'Returned',
-                                }">
-                                <i class="mr-2"
+                                }"
+                            >
+                                <i
+                                    class="mr-2"
                                     :class="{
-                                        'fas fa-check-circle text-green-500': item.status == 'Approved',
-                                        'fas fa-times-circle text-red-500': item.status == 'Rejected',
-                                        'fas fa-hourglass-half text-yellow-500': item.status == 'Pending',
-                                        'fas fa-arrow-rotate-left text-orange-500': item.status == 'Returned',
-                                    }"></i>
+                                        'fas fa-check-circle text-green-500':
+                                            item.status == 'Approved',
+                                        'fas fa-times-circle text-red-500':
+                                            item.status == 'Rejected',
+                                        'fas fa-hourglass-half text-yellow-500':
+                                            item.status == 'Pending',
+                                        'fas fa-arrow-rotate-left text-orange-500':
+                                            item.status == 'Returned',
+                                    }"
+                                ></i>
                                 {{ item.status }}
                             </span>
                         </td>
                         <td>{{ item.remarks }}</td>
                         <td>
-                            <button @click="getRecord(item.id)" class="p-2 text-gray-600 hover:text-gray-900 relative">
+                            <button
+                                @click="getRecord(item.id)"
+                                class="p-2 text-gray-600 hover:text-gray-900 relative"
+                            >
                                 <i class="fas fa-eye"></i>
                             </button>
                         </td>
@@ -81,15 +106,14 @@ function changePage(page) {
         <div v-if="records.data.length < 1" class="text-center">
             No data available
         </div>
+       
+                    <Pagination 
+                    :currentPage="records.current_page"
+                    :lastPage="records.last_page"
+                    :url="routeName"
+                    :previousPageUrl="records.prev_page_url"
+                    :nextPageUrl="records.next_page_url"
+                />
 
-        <!-- Pagination component -->
-        <Pagination
-            v-if="records.last_page > 1"
-            :currentPage="records.current_page"
-            :lastPage="records.last_page"
-            :previousPageUrl="records.prev_page_url"
-            :nextPageUrl="records.next_page_url"
-            @page-changed="changePage"
-        />
     </div>
 </template>

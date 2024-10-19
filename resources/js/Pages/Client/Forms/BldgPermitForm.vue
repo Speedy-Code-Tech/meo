@@ -22,6 +22,13 @@ const showPDFtemplate = ref(false);
 const togglePDFformatModal = (event) => {
     showPDFtemplate.value = event;
 };
+
+
+const selectedOption = ref("");
+const title = ref('');
+const selectError = ref("");
+
+
 const selectOptions = [
     {
         value: "Category A — Residential Dwellings",
@@ -151,9 +158,6 @@ const selectOptions = [
         details: "Fences over 1.80 meters high, tanks, and towers",
     },
 ];
-const selectedOption = ref("");
-const title = ref('');
-const selectError = ref("");
 const handlePdfTitle = ({ label }) => {
 	title.value = label;
 }
@@ -176,7 +180,7 @@ const formData = useForm({
     isNew: selectedradioOption,
     category: selectedOption,
     project_title: null,
-    type: 1,
+    type: 2,
     files: [],
     latitude: 14.069,
     longitude: 122.96,
@@ -212,7 +216,6 @@ const submit = () => {
     console.log(data.files);
     formData.post("/applicationform/store", {
         data: data,
-        headers: { "Content-Type": "multipart/form-data" },
         onError(error) {
             console.log(error);
         },
@@ -284,7 +287,7 @@ watchEffect(()=>{
             format (.pdf).
         </p>
 
-        <form @submit.prevent="submit">
+        <form @submit.prevent="submit" method="POST" enctype="multipart/form-data">
             <div :class="{ hidden: requirements.current_page != 1 }">
                 <!-- <RadioButton name="Please check(✔)applicable box:" :options="radioOptions"
                     v-model:modelValue="selectedradioOption" :message="radioError"/> -->

@@ -74,15 +74,6 @@ defineOptions({layout: AuthenticatedLayout});
             </Button>
           </li>
          
-          <li>
-            <Button
-              @click="changeTab('fee')"
-              :class="{'bg-gray-600 text-white hover:bg-gray-600': activeTab === 'fee'}"
-              class="min-w-[120px] text-center inline-block py-2 px-4 rounded-none hover:bg-gray-200"
-            >
-              Fees
-            </Button>
-          </li>
 
          
         </ul>
