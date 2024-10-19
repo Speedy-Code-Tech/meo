@@ -62,46 +62,52 @@ class MainController extends Controller
         $credentials = $request->validated();
         $username = $credentials['email'];
         $isAdmin = $request->type == 1;
+    
+        if ($request->type==1 || $request->type==0) {
+            $user = User::where('email', $username)
+                ->orWhere('contact_number', $username)
+                ->where('isAdmin', $isAdmin)
+                ->first();
 
-        $user = User::where('email', $username)
-            ->orWhere('contact_number', $username)
-            ->where('isAdmin', $isAdmin)
-            ->first();
-  
-        // Check if 'type' is set to '1' (indicating admin login)
-        if($request->type==$user->isAdmin){
-            
-        if ($user && Hash::check($credentials['password'], $user->password)) {
-            Auth::login($user);
-            
-            $client = Client::where('id', $user->client_id)->first();
-            // Store additional data in the session
-            if ($client) {
-                $request->session()->put("fName", $client->fname); // Add client's first name to session
+            // Check if 'type' is set to '1' (indicating admin login)
+            if ($request->type == $user->isAdmin) {
+
+                if ($user && Hash::check($credentials['password'], $user->password)) {
+                    Auth::login($user);
+
+                    $client = Client::where('id', $user->client_id)->first();
+                    // Store additional data in the session
+                    if ($client) {
+                        $request->session()->put("fName", $client->fname); // Add client's first name to session
+                    }
+
+                    // Regenerate session to prevent session fixation
+                    $request->session()->regenerate();
+
+                    // // Redirect based on user type
+
+                    return $user->isAdmin ? redirect()->intended('admin/dashboard') : redirect()->route('documentview');
+                }
+            } else if ($user->isAdmin == 0) {
+                return back()->withErrors([
+                    'email' => 'This page is not for User.'
+                ])->onlyInput('email');
+            } else if ($user->isAdmin == 1) {
+
+                return back()->withErrors([
+                    'email' => 'This page is not for Administrator.'
+                ])->onlyInput('email');
             }
-
-            // Regenerate session to prevent session fixation
-            $request->session()->regenerate();
-
-            // // Redirect based on user type
-
-            return $user->isAdmin ? redirect()->intended('admin/dashboard') : redirect()->route('documentview');
+            // If authentication fails, redirect back with error message
+            return back()->withErrors([
+                'email' => 'The provided credentials do not match our records.'
+            ])->onlyInput('email');
+        }else{
+             // If authentication fails, redirect back with error message
+             return back()->withErrors([
+                'email' => 'Something went Wrong.'
+            ])->onlyInput('email');
         }
-
-    }else if($user->isAdmin==0){
-        return back()->withErrors([
-            'email' => 'This page is not for User.'
-        ])->onlyInput('email');
-    }else if($user->isAdmin==1){
-
-        return back()->withErrors([
-            'email' => 'This page is not for Administrator.'
-        ])->onlyInput('email');
-    }
-        // If authentication fails, redirect back with error message
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.'
-        ])->onlyInput('email');
     }
 
     /**
@@ -127,7 +133,7 @@ class MainController extends Controller
      * @param Request $request
      * @return RedirectResponse
      */
-public function logout(Request $request): RedirectResponse
+    public function logout(Request $request): RedirectResponse
     {
         $user = Auth::user();
         if (!$user->isAdmin) {

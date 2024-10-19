@@ -1,7 +1,7 @@
 <script setup>
 import { useForm } from "@inertiajs/inertia-vue3";
 import Pagination from "../../Components/Pagination.vue";
-
+import moment from 'moment';
 import ClientLayout from "../../Shared/ClientLayout.vue";
 
 defineProps({
@@ -20,7 +20,19 @@ function getRecord(id) {
     });
 }
 function getType(type) {
-    return type == 0 ? "User" : "Admin";
+	var text = '';
+	switch (type) {
+		case "1":
+			text = "Business Permit (New)";
+			break;
+		case "2":
+			text = "Building Permit";
+			break;
+		default:
+			text = "Business Permit (Renewal)";
+			break;
+	}
+	return text;
 }
 // Function to handle page changes
 function changePage(page) {
@@ -37,7 +49,10 @@ function checkedBy(checkedBy) {
 }
 
 const routeName = 'my-application-forms';
-
+function formatDate(date) {
+	console.log(date);
+	return moment(date).format('MMMM DD, YYYY h:mm a');
+}
 </script>
 
 <template>
@@ -47,8 +62,8 @@ const routeName = 'my-application-forms';
             <thead>
                 <tr>
                     <th>Project Title</th>
+                    <th>Type of Permit</th>
                     <th>Category</th>
-                    <th>Document Type</th>
                     <th>Checked By</th>
                     <th>Status</th>
                     <th>Remarks</th>
@@ -59,8 +74,8 @@ const routeName = 'my-application-forms';
                 <template v-for="(item, index) in records.data" :key="index">
                     <tr class="border-y text-sm text-gray-900">
                         <td>{{ item.project_title.toUpperCase() }}</td>
-                        <td class="uppercase">{{ item.category }}</td>
                         <td>{{ getType(item.type) }}</td>
+                        <td>{{ formatDate(item.created_at)  }}</td>
                         <td>{{ checkedBy(item.checked_by) }}</td>
                         <td>
                             <span

@@ -21,13 +21,37 @@ class ApprovalController extends Controller
 {
     public function index()
     {
-        $queue = ApplicationForm::paginate(5);
-        $queue = ApplicationForm::with(['client', 'checkedBy'])->paginate(5);
+        $queue = ApplicationForm::with(['client', 'checkedBy'])
+            ->orderBy('created_at', 'desc') // Assuming you're ordering by the 'created_at' field
+            ->paginate(5);
+            $output = ApplicationForm::with(['client', 'checkedBy'])->orderBy('created_at', 'desc');
+
         return Inertia::render('Admin/Approval/Index', [
-            'queue' => $queue
+            'queue' => $queue,
+            'result'=> $output
         ]);
     }
+    public function search(Request $request){
 
+        // $validated = $request->all();
+        $search = $request->query('search');
+       
+        $queue = ApplicationForm::with(['client', 'checkedBy'])
+        ->where('project_title','like','%'.$search.'%')
+        ->orWhereHas('client', function($query) use($search){
+            $query->where('fname', 'like', '%' . $search . '%')
+            ->orWhere('mname', 'like', '%' . $search . '%')
+            ->orWhere('lname', 'like', '%' . $search . '%');
+        })
+        ->orWhereHas('checkedBy', function($query) use($search){
+            $query->where('fname', 'like', '%' . $search . '%')
+            ->orWhere('mname', 'like', '%' . $search . '%')
+            ->orWhere('lname', 'like', '%' . $search . '%');
+        })
+        ->orderBy('created_at', 'desc')->get();
+        return $queue;
+        
+    }
     public function changeStatus(Request $request)
     {
         $validated = $request->all();
@@ -81,30 +105,30 @@ class ApprovalController extends Controller
         return Redirect::route('admin.approval.index');
     }
 
-   public function addDocumentRemarks(Request $request)
-{
-    // Find the document by ID
-    $document = ApplicationDocument::find($request->id);
-    
-    // If remarks already exist, return an error
-    if($document->remarks) {
+    public function addDocumentRemarks(Request $request)
+    {
+        // Find the document by ID
+        $document = ApplicationDocument::find($request->id);
+
+        // If remarks already exist, return an error
+        if ($document->remarks) {
+            return response()->json([
+                'remarks' => 'Remarks already exist for this document.',
+                'success' => false,
+                'datas' => $document->remarks
+            ]);
+        }
+
+        // Update the document with the new remarks
+        $document->update(['remarks' => $request->remarks]);
+
+        // Return a redirect with success message
         return response()->json([
-            'remarks' => 'Remarks already exist for this document.',
-            'success'=>false,
-            'datas'=>$document->remarks
+            'remarks' => 'Remarks Added SUccessfully',
+            'success' => true,
+            'datas' => $document->remarks
         ]);
     }
-
-    // Update the document with the new remarks
-    $document->update(['remarks' => $request->remarks]);
-
-    // Return a redirect with success message
-    return response()->json([
-        'remarks' => 'Remarks Added SUccessfully',
-        'success'=>true,
-        'datas'=>$document->remarks
-    ]);
-}
 
 
     public function getRecord(Request $request)
