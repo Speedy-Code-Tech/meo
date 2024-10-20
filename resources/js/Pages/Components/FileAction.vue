@@ -1,9 +1,10 @@
 <script setup>
 import { useForm } from "@inertiajs/inertia-vue3";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useToast } from "vue-toastification";
 const toast = useToast();
 import TextInput from "./TextInput.vue";
+import axios from "axios";
 const props = defineProps({
     label: {
         type: String,
@@ -41,6 +42,10 @@ const props = defineProps({
         type: Number,
         default: "upload-file",
     },
+    fileData:{
+        type: Object,
+        default:null
+    }
 });
 const hasUpload = ref(false);
 const fileUploadText = ref("Upload");
@@ -55,15 +60,12 @@ const emit = defineEmits([
 ]);
 
 const handleFileChange = (event) => {
-    console.log("wew");
     const file = event.target.files[0];
-    console.log(file);
     if (file) {
         emit("file-selected", { file, inputId: props.inputId });
         hasUpload.value = true;
         fileUploadText.value = "File Uploaded";
     }
-    console.log(hasUpload.value);
 };
 
 const handleDownload = (data) => {
@@ -99,40 +101,54 @@ const removePdfUrl = (inputId) => {
     fileUploadText.value = "Upload";
     const fileInput = document.getElementById(inputId);
     fileInput.value = null;
-    console.log(inputId);
 };
 
 // remarks
 const formData = useForm({
     id: null,
     remarks: null,
+    approved:0
 });
+
+// Handling approval and disapproval toggles
+let isApprove = ref(false);
+let disApprove = ref(false);
+
+const approve = () => {
+    isApprove.value = !isApprove.value;  // Toggle the value for approval
+    disApprove.value = false;  // Ensure disapproval is turned off
+    console.log(isApprove.value);
+    formData.approved = 1;
+};
+
+const dapprove = () => {
+    disApprove.value = !disApprove.value;  // Toggle the value for disapproval
+    isApprove.value = false;  // Ensure approval is turned off
+    formData.approved = 2;
+
+};
 const showRemarksModal = ref(false);
 const remarks = ref(null); // To store and display the document remarks
 
 const addRemarks = async () => {
     formData.id = props.documentId;
+  
 
-    try {
-        // Make the Axios POST request
-        const response = await axios.post(
-            "/admin/approval/addDocumentRemarks",
-            {
-                id: formData.id,
-                remarks: formData.remarks,
-            }
-        );
-
-        // Handle success response
+try {
+        const response = await axios.post("/admin/approval/addDocumentRemarks", {
+            id: formData.id,
+            remarks: formData.remarks,
+            isFileApprove:formData.approved
+        });
+     
         if (response.data.success) {
             toast.success(response.data.remarks);
-
             toggleRemarksModal();
         } else {
-            toast.error(response.data.remarks);
+            console.log(response);
+            toast.error(response.data);
         }
     } catch (error) {
-        // Handle error response
         if (error.response && error.response.data) {
             toast.error(error.response.data.remarks || "An error occurred.");
         } else {
@@ -146,15 +162,38 @@ const addRemarks = async () => {
 function toggleRemarksModal() {
     showRemarksModal.value = !showRemarksModal.value;
 }
+const isDocumentChecked = ref("");  // This will store the result of isCheck
+
+const isChecks = ref(false); // Use ref to store the result
+const isCheck=  async(id)=>{
+   if(id!=null){
+    const res = await axios.get('/admin/approval/isCheck',{
+        params:{
+            id: id
+        }
+    })
+    // isDocumentChecked.value = res.data.is_file_approve == 1; 
+    if(res.data.is_file_approve == 1){
+        isDocumentChecked.value = "check"; 
+    }else if(res.data.is_file_approve == 2){
+        isDocumentChecked.value = "wrong";     
+    }
+   }
+    // return res.data.is_file_approve;
+    // return res.data
+}
+
+const getDocumentId = ()=>{
+    return props.documentId;
+}
 </script>
+
 <template>
     <div class="flex items-center justify-between mb-3">
-        <div class="flex-1">
-            {{ label }}
-        </div>
+        <div class="flex-1">{{ label }}</div>
+        
         <div class="flex-shrink-0 flex space-x-3">
             <!-- Download Button -->
-
             <div
                 v-if="showDownloadButton"
                 @click="handleDownload(label), handlePdfTitle()"
@@ -183,7 +222,9 @@ function toggleRemarksModal() {
                 @change="handleFileChange"
                 accept="application/pdf"
             />
-            <div
+        
+            <div v-if="fileData!=null" style="display: flex; gap: 5px;">
+                <div
                 v-if="documentId != null"
                 class="flex items-center justify-center w-6 h-6 bg-orange-500 rounded-full cursor-pointer"
             >
@@ -198,13 +239,46 @@ function toggleRemarksModal() {
             >
                 <i
                     class="fa-solid fa-eye text-white"
-                    @click="
-                        handlePdfUrl(), handlePdfTitle(), handlePdfRemarks()
-                    "
+                    @click="handlePdfUrl(), handlePdfTitle(), handlePdfRemarks()"
+                ></i>
+            </div>
+           
+            <div
+                v-if="(hasFile != null && isCheck(getDocumentId()) && isDocumentChecked=='check')"
+                class="flex items-center justify-center w-6 h-6 bg-green-500 rounded-full"
+            >
+                <i class="fa-solid fa-check text-white text-1xl"></i>
+            </div>
+
+            <div
+                v-else-if="isCheck(getDocumentId()) && isDocumentChecked=='wrong'"
+                class="flex items-center justify-center w-6 h-6 bg-red-500 rounded-full"
+            >
+                <i class="fa-solid fa-x text-white"></i>
+            </div>
+            </div>
+            <div v-else style="display: flex; gap: 5px;">
+                <div
+                v-if="documentId != null"
+                class="flex items-center justify-center w-6 h-6 bg-orange-500 rounded-full cursor-pointer"
+            >
+                <i
+                    class="fa-solid fa-inbox text-white"
+                    @click="toggleRemarksModal"
+                ></i>
+            </div>
+        
+            <div
+                v-if="hasFile != null"
+                class="flex items-center justify-center w-6 h-6 bg-yellow-500 rounded-full cursor-pointer"
+            >
+                <i
+                    class="fa-solid fa-eye text-white"
+                    @click="handlePdfUrl(), handlePdfTitle(), handlePdfRemarks()"
                 ></i>
             </div>
             <div
-                v-if="hasFile != null"
+                 v-if="hasFile != null"
                 class="flex items-center justify-center w-6 h-6 bg-green-500 rounded-full"
             >
                 <i class="fa-solid fa-check text-white text-1xl"></i>
@@ -223,8 +297,11 @@ function toggleRemarksModal() {
             >
                 <i class="fas fa-x text-white"></i>
             </div>
+            </div>
         </div>
     </div>
+
+    <!-- Approval and Disapproval Buttons -->
     <div
         v-if="showRemarksModal"
         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50"
@@ -254,30 +331,45 @@ function toggleRemarksModal() {
                     </button>
                 </div>
                 <div class="p-4 h-[30vh]">
-                    <!-- <TextInput name="Remarks" ></TextInput> -->
                     <textarea
                         name="Remarks"
                         class="w-full h-15 border border-gray-300 rounded p-2"
                         v-model="formData.remarks"
                     ></textarea>
-                    <div style="display: flex; width: 100%; justify-content: space-; padding-top: 10px;">
-                        <button>
+                    <div
+                        style="
+                            display: flex;
+                            width: 100%;
+                            justify-content: space-between;
+                            gap: 10px;
+                            padding-top: 10px;
+                        "
+                    >
+                        <!-- Disapprove Button -->
+                        <div class="w-[100%]" @click="dapprove">
                             <div
-                                class="flex items-center justify-center w-6 h-6 bg-red-500 rounded-full"
+                                class="flex items-center justify-center w-[100%] h-10 rounded-full"
+                                :class="{
+                                    'bg-red-500': disApprove,
+                                    'bg-red-200': !disApprove,
+                                }"
                             >
                                 <i class="fa-solid fa-x text-white"></i>
                             </div>
-                        </button>
-                        <button>
+                        </div>
+
+                        <!-- Approve Button -->
+                        <div class="w-[100%]" @click="approve">
                             <div
-                                v-if="hasFile != null"
-                                class="flex items-center justify-center w-6 h-6 bg-green-500 rounded-full"
+                                class="flex items-center justify-center w-[100%] h-10 rounded-full"
+                                :class="{
+                                    'bg-green-500': isApprove,
+                                    'bg-green-200': !isApprove,
+                                }"
                             >
-                                <i
-                                    class="fa-solid fa-check text-white text-1xl"
-                                ></i>
+                                <i class="fa-solid fa-check text-white text-1xl"></i>
                             </div>
-                        </button>
+                        </div>
                     </div>
                     <div class="mt-5">
                         <button class="primary-btn">Submit</button>
@@ -287,7 +379,6 @@ function toggleRemarksModal() {
         </div>
     </div>
 </template>
-
 <style scoped>
 /* Custom styles */
 .bg-blue-500 {

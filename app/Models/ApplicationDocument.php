@@ -14,5 +14,7 @@ class ApplicationDocument extends Model
         'requirement_id',
         'application_form_id',
         'remarks',
+        'is_file_approve'
     ];
+    
 }

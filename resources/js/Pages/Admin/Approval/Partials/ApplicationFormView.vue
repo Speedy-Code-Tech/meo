@@ -14,6 +14,7 @@ defineProps({
 	client: [Object, Array],
 	typeProp: String,
 	params: [Object, Array],
+	fileApprove:[Object, Array]
 });
 
 const pdfDownloadUrl = ref('https://example.com/path/to/your/pdf-file.pdf');
@@ -145,6 +146,7 @@ function changeAction(title) {
 			Name: <span class="font-bold uppercase">{{ client.lname }}, {{ client.fname }} {{
 				client.mname }}</span>
 		</div>
+	
 		<!-- <div>
 			Age: <span class="font-bold uppercase">{{ client.age }}</span>
 		</div> -->
@@ -181,7 +183,7 @@ function changeAction(title) {
 					{{ item.subcategory_name }}
 				</p>
 				
-				<FileAction :label="item.requirements_name" :showDownloadButton="false" :showUploadButton="false"
+				<FileAction :fileData="fileApprove" :label="item.requirements_name" :showDownloadButton="false" :showUploadButton="false"
 					:hasFile="item.file_path" :documentId="item.document_id" :documentRemarks="item.document_remarks"
 					@pdf-url="handlePdfUrl" @label="handlePdfTitle" @documentRemarks="handlePdfRemarks"/>
 			</div>

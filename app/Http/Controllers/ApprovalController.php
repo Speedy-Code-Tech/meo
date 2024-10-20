@@ -118,9 +118,9 @@ class ApprovalController extends Controller
                 'datas' => $document->remarks
             ]);
         }
-
+        
         // Update the document with the new remarks
-        $document->update(['remarks' => $request->remarks]);
+        $document->update(['is_file_approve'=>$request->isFileApprove,'remarks' => $request->remarks]);
 
         // Return a redirect with success message
         return response()->json([
@@ -130,16 +130,20 @@ class ApprovalController extends Controller
         ]);
     }
 
-
+    public function isCheck(Request $req){
+        $id = $req->query('id');
+        $data = ApplicationDocument::find($id);
+        return response()->json($data);
+     }
     public function getRecord(Request $request)
     {
         $id = $request->id;
         $type = $request->type;
         $clientId = $request->clientId;
-
+        $application_docs = ApplicationDocument::with('');
         $form = ApplicationForm::find($id);
         $record = Requirement::getRequirementsWithApplicationForm($id, $clientId, 5, $type);
-
+        $isApprove = ApplicationDocument::where('application_form_id',$form->id)->get();
         $client = Client::find($clientId);
         // $client = User::where('client_id', $clientId)
         //     ->first();
@@ -152,7 +156,8 @@ class ApprovalController extends Controller
             'record' => $record,
             'client' => $client,
             'typeProp' => $type,
-            'params' => $request->only(['id', 'type', 'clientId'])
+            'params' => $request->only(['id', 'type', 'clientId']),
+            'fileApprove'=>$isApprove
         ]);
     }
 
@@ -162,6 +167,8 @@ class ApprovalController extends Controller
      * @param string|null $date. Date of Birth
      * @return int|null
      */
+
+    
     private function calculateAge(?string $date): ?int
     {
         if (is_null($date)) {

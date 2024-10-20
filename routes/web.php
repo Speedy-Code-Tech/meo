@@ -130,6 +130,7 @@ Route::middleware('auth')->group(function () {
         Route::prefix('/approval')
             ->controller(ApprovalController::class)
             ->group(function () {
+                Route::get('/isCheck','isCheck')->name('approval.isCheck');
                Route::get('/search','search')->name('approval.search');
                 Route::get('/', 'index')->name('approval.index');
                 Route::post('/changeStatus', 'changeStatus')->name('approval.changestatus');

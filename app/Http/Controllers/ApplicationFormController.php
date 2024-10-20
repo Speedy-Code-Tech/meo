@@ -142,6 +142,7 @@ class ApplicationFormController extends Controller
         $type = $form->type;
         $clientId = $form->client_id;
         $record = Requirement::getRequirementsWithApplicationForm($id, $clientId, 5, $type);
+        $isApprove = ApplicationDocument::where('application_form_id',$form->id)->get();
 
         $client = Client::find($clientId);
  
@@ -150,7 +151,8 @@ class ApplicationFormController extends Controller
             'record' => $record,
             'client' => $client,
             'typeProp' => $type,
-            'params' => $request->only(['id', 'type', 'clientId'])
+            'params' => $request->only(['id', 'type', 'clientId']),
+            'fileApprove'=>$isApprove
         ]);
     }
 }
