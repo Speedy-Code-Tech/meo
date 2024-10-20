@@ -289,14 +289,14 @@ const getStatus = ()=>{
                 ></i>
             </div>
             <div
-                 v-if="hasFile != null"
+                v-if="(hasFile != null && isCheck(getDocumentId()) && isDocumentChecked=='check')"
                 class="flex items-center justify-center w-6 h-6 bg-green-500 rounded-full"
             >
                 <i class="fa-solid fa-check text-white text-1xl"></i>
             </div>
 
             <div
-                v-if="!showUploadButton && hasFile == null"
+                v-else-if="isCheck(getDocumentId()) && isDocumentChecked=='wrong'"
                 class="flex items-center justify-center w-6 h-6 bg-red-500 rounded-full"
             >
                 <i class="fa-solid fa-x text-white"></i>
