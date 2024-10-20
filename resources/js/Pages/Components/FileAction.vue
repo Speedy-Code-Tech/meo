@@ -45,6 +45,10 @@ const props = defineProps({
     fileData:{
         type: Object,
         default:null
+    },
+    status:{
+        type: String,
+        default:null
     }
 });
 const hasUpload = ref(false);
@@ -186,6 +190,10 @@ const isCheck=  async(id)=>{
 const getDocumentId = ()=>{
     return props.documentId;
 }
+const stat = ref(null)
+const getStatus = ()=>{
+    stat.value = props.status
+}
 </script>
 
 <template>
@@ -215,6 +223,8 @@ const getDocumentId = ()=>{
             >
                 {{ getUploadText() }}
             </label>
+{{ getStatus() }}
+
             <input
                 :id="inputId"
                 type="file"
@@ -223,7 +233,7 @@ const getDocumentId = ()=>{
                 accept="application/pdf"
             />
         
-            <div v-if="fileData!=null" style="display: flex; gap: 5px;">
+            <div v-if="fileData!=null && status==null" style="display: flex; gap: 5px;">
                 <div
                 v-if="documentId != null"
                 class="flex items-center justify-center w-6 h-6 bg-orange-500 rounded-full cursor-pointer"
@@ -257,9 +267,10 @@ const getDocumentId = ()=>{
                 <i class="fa-solid fa-x text-white"></i>
             </div>
             </div>
+        
             <div v-else style="display: flex; gap: 5px;">
                 <div
-                v-if="documentId != null"
+                v-if="documentId != null && status==null"
                 class="flex items-center justify-center w-6 h-6 bg-orange-500 rounded-full cursor-pointer"
             >
                 <i

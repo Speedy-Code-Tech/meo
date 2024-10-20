@@ -220,6 +220,7 @@ function getUrlWithParams(url) {
                     :showDownloadButton="false"
                     :showUploadButton="false"
                     :documentId="item.document_id"
+                    status="client"
                     :hasFile="item.file_path"
                     :documentRemarks="item.document_remarks"
                     @pdf-url="handlePdfUrl"
