@@ -3,12 +3,13 @@ import { ref } from 'vue'; // Import ref for reactivity
 import { useForm } from "@inertiajs/inertia-vue3";
 import TextInput from "../Components/TextInput.vue";
 import ClientLayout from "../../Shared/ClientLayout.vue";
+import { useToast } from 'vue-toastification';
 
 defineOptions({ layout: ClientLayout });
 const params = defineProps({
     type: Number,
 });
-
+const toast = useToast();
 // Create formData using useForm
 const formData = useForm({
     fname: null,
@@ -38,6 +39,9 @@ const submit = () => {
 
     passwordError.value = ""; // Reset error if password is valid
     formData.post("/register", {
+        onSuccess:()=>{
+            toast.success("Account created Successfully!");
+        },
         onError: (e) => {
             console.log(e)
             formData.reset("password", "password_confirmation");

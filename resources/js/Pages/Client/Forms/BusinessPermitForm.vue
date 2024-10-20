@@ -209,11 +209,21 @@ const prepareFormData = () => {
 
 const submit = () => {
     const data = prepareFormData();
+    if(formData.project_title==null){
+        toast.warning("Title must not be Empty!");
+        return;
+    }
+    if(formData.category==null){
+        toast.warning("Category must not be Empty!");
+        return;
+    }
     console.log(data);
     formData.post("/applicationform/store", {
         data: data,
         headers: { "Content-Type": "multipart/form-data" },
         onError(error) {
+            toast.warning("Business Permit Form must Upload a file!");
+            
             console.log(error);
         },
         onSuccess(response) {},

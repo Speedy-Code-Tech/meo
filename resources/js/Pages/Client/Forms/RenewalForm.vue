@@ -205,10 +205,21 @@ function checkFileUpload(inputId) {
 }
 const submit = () => {
     const data = prepareFormData();
+    if(formData.project_title==null){
+        toast.warning("Title must not be Empty!");
+        return;
+    }
+    if(formData.category==null){
+        toast.warning("Category must not be Empty!");
+        return;
+    }
     formData.post('/applicationform/store', {
         data: data,
         headers: { 'Content-Type': 'multipart/form-data' },
-        onError: () => formData.reset(),
+        onError: () => {
+            toast.warning("Renewal Form must Upload a file!");
+
+        },
         onSuccess(response) {
             console.log(response);
             // toast.success("Application form submitted successfully!");

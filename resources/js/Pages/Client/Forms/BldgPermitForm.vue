@@ -214,9 +214,19 @@ const prepareFormData = () => {
 const submit = () => {
     const data = prepareFormData();
     console.log(data.files);
+    if(formData.project_title==null){
+        toast.warning("Title must not be Empty!");
+        return;
+    }
+    if(formData.category==null){
+        toast.warning("Category must not be Empty!");
+        return;
+    }
     formData.post("/applicationform/store", {
         data: data,
         onError(error) {
+            toast.warning("Building Permit Form must Upload a file!");
+
             console.log(error);
         },
         onSuccess(response) {
