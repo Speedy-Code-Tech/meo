@@ -130,6 +130,9 @@ const handleInput = async (e) => {
     console.log(response.data);
     hasContent.value = response.data.length > 0;
     searchData.value = response.data;
+    if(inputText.value.length<1){
+        hasContent.value=0
+    }
 };
 // Search bar functionality
 
@@ -182,7 +185,6 @@ onMounted(() => {
                 class="w-full p-2 border rounded"
             />
         </div>
-
         <div v-if="hasContent">
             <!-- Table -->
             <div  style="height: 350px; overflow-y: scroll;">
@@ -276,7 +278,42 @@ onMounted(() => {
             <!-- Pagination -->
 		
         </div>
-		
+	   <div v-else-if="inputText.length>1 && !hasContent">
+            <!-- Table -->
+            <table class="w-full text-sm text-left">
+                <thead class="text-md text-gray-700 uppercase">
+                    <tr>
+                        <th class="w-[170px]">Type of Permit</th>
+                        <th>Name of Owner</th>
+                        <th>Project Title</th>
+                        <th>Application Date</th>
+                        <th>Remarks</th>
+                        <th>Status</th>
+                        <th>Checked By</th>
+                        <th>View</th>
+                    </tr>
+                </thead>
+                
+            </table>
+
+			<!-- No data available message -->
+            <div
+                v-if="inputText.length>1 && !hasContent"
+                class="w-full bg-gray-100 text-center text-sm p-5"
+            >
+                No data available
+            </div>
+            <!-- Pagination -->
+            <Pagination
+                v-if="queue.total > 1 && queue.last_page > 1"
+                :currentPage="queue.current_page"
+                :lastPage="queue.last_page"
+                @page-changed="changePage(queue.current_page)"
+                :url="routeName"
+                :previousPageUrl="queue.prev_page_url"
+                :nextPageUrl="queue.next_page_url"
+            />
+        </div>	
         <div v-else>
             <!-- Table -->
             <table class="w-full text-sm text-left">
@@ -292,7 +329,7 @@ onMounted(() => {
                         <th>View</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody >
                     <template
                         v-for="(item, index) in filteredQueue"
                         :key="index"
